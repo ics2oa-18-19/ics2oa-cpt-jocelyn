@@ -71,8 +71,6 @@ def on_draw():
     global player_x, player_y, zombie_x, zombie_y
 
     arcade.draw_rectangle_filled(player_x, player_y, 45,45, arcade.color.BLUE)
-    arcade.draw_line(WIDTH - 25, HEIGHT,WIDTH,120,arcade.color.NAVY_BLUE)
-    arcade.draw_line(25, HEIGHT,0,120,arcade.color.NAVY_BLUE)
 
     for x,y in zip(zombie_x,zombie_y):
         draw_zombie(x,y)

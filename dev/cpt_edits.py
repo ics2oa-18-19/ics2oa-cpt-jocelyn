@@ -1,5 +1,3 @@
-#now has differnet screens
-
 import arcade
 import random
 
@@ -90,11 +88,12 @@ def on_draw():
         arcade.set_background_color(arcade.color.LIGHT_MOSS_GREEN)
 
     if current_screen == "instructions":
-        arcade.draw_text(""" 1. Use left and right arrow keys to move the player.
+        arcade.draw_text(""" 
+        1. Use left and right arrow keys to move the player.
         2. Your objective is to get as far as you can without dying.
         3. Each time you hit a zombie you lose 10 health
         4. Once your health reaches zero, you lose.
-        """)
+        """, 0, HEIGHT-HEIGHT/3,arcade.color.BLACK)
 
         arcade.set_background_color(arcade.color.PINK_PEARL)
 
@@ -111,8 +110,14 @@ def on_key_press(key, modifiers):
     global left_key, right_key, up_key, down_key, current_screen
 
     if current_screen == "menu":
+        if key == arcade.key.A:
+            current_screen = "instructions"
         if key == arcade.key.SPACE:
             current_screen = "play"
+
+    if current_screen == "instructions":
+        if key == arcade.key.ESCAPE:
+            current_screen = "menu"
 
     if current_screen == "play":
         if key == arcade.key.ESCAPE:

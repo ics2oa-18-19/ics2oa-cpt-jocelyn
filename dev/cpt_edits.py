@@ -47,31 +47,42 @@ def setup():
 
 
 def update(delta_time):
-    global left_key, right_key, player_x, player_y, zombie_y, zombie_x, health
+    global left_key, right_key, player_x, player_y, zombie_y, zombie_x, health, current_screen
 
     if current_screen == "play":
-        #player
+        # player
         speed = 8
         if left_key == True:
             player_x -= speed
         elif right_key == True:
             player_x += speed
 
-
-        #player border
+        # player border
         if player_x < 10:
             player_x = 10
         elif player_x > WIDTH - 55:
             player_x = WIDTH - 55
 
-
-        #zombie
+        # zombie
         for index in range(len(zombie_y)):
             zombie_y[index] -= 5
-            if zombie_y[index] < 0:
+            if zombie_y[index] < 0 or health == 0:
                 zombie_y[index] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
                 zombie_x[index] = random.randrange(15, WIDTH - 25, 40)
 
+        # collision
+        for i in range(len(zombie_x)):
+            if (zombie_x[i] >= player_x and zombie_x[i] <= player_x + 45 and
+                    zombie_y[i] <= player_y and zombie_y[i] >= player_y - 45):
+                print("boop")
+                health -= 5
+                print(health)
+
+        if health == 0:
+            current_screen = "dead"
+
+    if current_screen == "dead":
+        health = 100
 
 
 def on_draw():
@@ -102,7 +113,6 @@ def on_draw():
 
     if current_screen == "play":
         arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
-        arcade.draw_text("ESC to return to menu",WIDTH/3,50,arcade.color.WHITE)
 
         arcade.draw_xywh_rectangle_filled(player_x, player_y, 40,40, arcade.color.RED)
 

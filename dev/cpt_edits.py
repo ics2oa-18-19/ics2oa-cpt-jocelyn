@@ -83,28 +83,39 @@ def on_draw():
         arcade.draw_text("DODGE ZOMBIES", 25, HEIGHT-100,arcade.color.BLACK,36,2000,"Right", "Calibri",True)
         arcade.draw_text("Press Space to play",WIDTH/3,HEIGHT/3,arcade.color.BLACK)
         arcade.draw_text("ESC to return to menu",WIDTH/3,HEIGHT/3.5,arcade.color.BLACK)
-        arcade.draw_text("How to Play(a)", WIDTH/3, HEIGHT/2,arcade.color.BLACK)
+        arcade.draw_text("How to Play(a)", WIDTH/3, HEIGHT/2.5,arcade.color.BLACK)
 
         arcade.set_background_color(arcade.color.LIGHT_MOSS_GREEN)
 
     if current_screen == "instructions":
+
+        arcade.draw_text("How to Play:", 20, HEIGHT-50,arcade.color.BLACK,24)
         arcade.draw_text(""" 
         1. Use left and right arrow keys to move the player.
         2. Your objective is to get as far as you can without dying.
         3. Each time you hit a zombie you lose 10 health
         4. Once your health reaches zero, you lose.
         """, 0, HEIGHT-HEIGHT/3,arcade.color.BLACK)
+        arcade.draw_text("ESC to return to menu",WIDTH/3,50,arcade.color.BLACK)
 
         arcade.set_background_color(arcade.color.PINK_PEARL)
 
     if current_screen == "play":
-        arcade.set_background_color(arcade.color.ASH_GREY)
+        arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
+        arcade.draw_text("ESC to return to menu",WIDTH/3,50,arcade.color.WHITE)
 
         arcade.draw_xywh_rectangle_filled(player_x, player_y, 40,40, arcade.color.RED)
 
         for x,y in zip(zombie_x,zombie_y):
             draw_zombie(x,y,zombie_w,zombie_h)
 
+    if current_screen == "dead":
+        arcade.set_background_color(arcade.color.BLACK)
+        arcade.draw_text("DUN", 25, HEIGHT-100,arcade.color.RED,36,2000,"left","Calibri",True)
+        arcade.draw_text("DUN", 300, HEIGHT - 150, arcade.color.RED, 36, 2000, "left", "Calibri", True)
+        arcade.draw_text("DUN", 100, HEIGHT - 200, arcade.color.RED, 36, 2000, "left", "Calibri", True)
+        arcade.draw_text("You Died", WIDTH/4,HEIGHT/2,arcade.color.WHITE,40)
+        arcade.draw_text("ESC to return to menu",WIDTH/3,50,arcade.color.WHITE)
 
 def on_key_press(key, modifiers):
     global left_key, right_key, up_key, down_key, current_screen
@@ -128,6 +139,10 @@ def on_key_press(key, modifiers):
         elif key == arcade.key.RIGHT:
             right_key = True
 
+    if current_screen == "dead":
+        if key == arcade.key.ESCAPE:
+            current_screen = "menu"
+
 
 
 def on_key_release(key, modifiers):
@@ -150,10 +165,10 @@ def draw_zombie(x,y,w,h):
     # w = 30
     # h = 80
 
-    arcade.draw_xywh_rectangle_filled(x, y, w, h/8*3, arcade.color.MOSS_GREEN)
+    arcade.draw_xywh_rectangle_filled(x, y, w, h/8*3, arcade.color.LIGHT_MOSS_GREEN)
     arcade.draw_xywh_rectangle_filled(x, y-40, w, h/2, arcade.color.SAND)
-    arcade.draw_xywh_rectangle_filled(x, y-50, w-20, h/8, arcade.color.MOSS_GREEN)
-    arcade.draw_xywh_rectangle_filled(x+20, y-50, w-20, h/8, arcade.color.MOSS_GREEN)
+    arcade.draw_xywh_rectangle_filled(x, y-50, w-20, h/8, arcade.color.LIGHT_MOSS_GREEN)
+    arcade.draw_xywh_rectangle_filled(x+20, y-50, w-20, h/8, arcade.color.LIGHT_MOSS_GREEN)
 
 if __name__ == '__main__':
     setup()

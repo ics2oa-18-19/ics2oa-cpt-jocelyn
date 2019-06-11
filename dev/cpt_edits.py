@@ -1,6 +1,5 @@
 import arcade
 import random
-import time
 
 WIDTH = 500
 HEIGHT = 650
@@ -13,6 +12,7 @@ player_x = WIDTH / 2 - 40/2
 player_y = 50
 
 health = 100
+player_speed = 7
 
 left_key = False
 right_key = False
@@ -32,7 +32,8 @@ for i in range(num):
     zombie_x.append(x)
     zombie_y.append(y)
 
-speed = 5
+zombie_speed = 5
+zombie_loop = 0
 
 def setup():
     arcade.open_window(WIDTH, HEIGHT, "My Arcade Game")
@@ -50,15 +51,15 @@ def setup():
 
 
 def update(delta_time):
-    global left_key, right_key, player_x, player_y, zombie_y, zombie_x, health, current_screen
+    global left_key, right_key, player_x, player_y, zombie_y, zombie_x, health, current_screen,player_speed, zombie_speed, zombie_loop
 
     if current_screen == "play":
         # player
-        speed = 8
+
         if left_key == True:
-            player_x -= speed
+            player_x -= player_speed
         elif right_key == True:
-            player_x += speed
+            player_x += player_speed
 
         # player border
         if player_x < 10:
@@ -68,17 +69,24 @@ def update(delta_time):
 
         # zombie
         for index in range(len(zombie_y)):
-            zombie_y[index] -= 5
+            zombie_y[index] -= zombie_speed
             if zombie_y[index] < 0 or health == 0:
                 zombie_y[index] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
                 zombie_x[index] = random.randrange(15, WIDTH - 25, 40)
+                
+        if zombie_y[0] >= 0:
+            zombie_loop += 1
+        
+        if zombie_loop == 5:
+            zombie_speed += 1
 
         # collision
         for i in range(len(zombie_x)):
             if (zombie_x[i] >= player_x and zombie_x[i] <= player_x + 45 and
+                zombie_y[i] <= player_y and zombie_y[i] >= player_y - 45 or
+                zombie_x[i] + zombie_w >= player_x and zombie_x[i] + zombie_w <= player_x + 45 and
                 zombie_y[i] <= player_y and zombie_y[i] >= player_y - 45):
-                    health -= 5
-                    print(health)
+                    health -= 10
                     zombie_y[i] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
 
         if health == 0:
@@ -86,6 +94,8 @@ def update(delta_time):
             for index in range(len(zombie_y)):
                     zombie_y[index] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
                     zombie_x[index] = random.randrange(15, WIDTH - 25, 40)
+
+
 
     if current_screen == "dead":
         health = 100
@@ -109,7 +119,7 @@ def on_draw():
         arcade.draw_text(""" 
         1. Use left and right arrow keys to move the player.
         2. Your objective is to get as far as you can without dying.
-        3. Each time you hit a zombie you lose 5 health
+        3. Each time you hit a zombie you lose 10 health
         4. Once your health reaches zero, you lose.
         """, 0, HEIGHT-HEIGHT/3,arcade.color.BLACK)
         arcade.draw_text("ESC to return to menu",WIDTH/3,50,arcade.color.BLACK)
@@ -191,6 +201,8 @@ def draw_zombie(x,y,w,h):
     arcade.draw_xywh_rectangle_filled(x, y-40, w, h/2, arcade.color.SAND)
     arcade.draw_xywh_rectangle_filled(x, y-50, w-20, h/8, arcade.color.LIGHT_MOSS_GREEN)
     arcade.draw_xywh_rectangle_filled(x+20, y-50, w-20, h/8, arcade.color.LIGHT_MOSS_GREEN)
+
+
 
 if __name__ == '__main__':
     setup()

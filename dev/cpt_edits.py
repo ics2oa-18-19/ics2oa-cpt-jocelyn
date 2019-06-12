@@ -91,16 +91,20 @@ def update(delta_time):
                     health -= 10
                     zombie_y[i] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
 
-        if health == 0:
+        if health <= 0:
             current_screen = "dead"
             for index in range(len(zombie_y)):
                     zombie_y[index] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
                     zombie_x[index] = random.randrange(15, WIDTH - 25, 40)
-
+            player_x = WIDTH / 2 - 40 / 2
+            player_y = 50
 
 
     if current_screen == "dead":
         health = 100
+        zombie_speed = 7
+        zombie_loop = 0
+        
 
 
 def on_draw():
@@ -201,6 +205,7 @@ def draw_zombie(x,y,w,h):
 
 def draw_car(x,y):
     arcade.draw_xywh_rectangle_filled(x, y, 40, 40, arcade.color.RED)
+    arcade.draw_xywh_rectangle_filled(x, y - 15, 40, 12, arcade.color.PAYNE_GREY)
     arcade.draw_xywh_rectangle_filled(x, y - 10, 10, 10, arcade.color.BLACK)
     arcade.draw_xywh_rectangle_filled(x + 30, y - 10, 10, 10, arcade.color.BLACK)
     arcade.draw_xywh_rectangle_filled(x + 5, y + 20, 30, 15, arcade.color.PALE_ROBIN_EGG_BLUE)

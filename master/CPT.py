@@ -1,6 +1,5 @@
 import arcade
 import random
-import time
 
 WIDTH = 500
 HEIGHT = 650

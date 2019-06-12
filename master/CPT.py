@@ -12,10 +12,11 @@ player_x = WIDTH / 2 - 40/2
 player_y = 50
 
 health = 100
+player_speed = 7
 
 left_key = False
 right_key = False
-hit = False
+
 
 #zombie
 zombie_x = []
@@ -30,6 +31,9 @@ for i in range(num):
     y = random.randrange(HEIGHT+25,HEIGHT+250,70)
     zombie_x.append(x)
     zombie_y.append(y)
+
+zombie_speed = 5
+zombie_loop = 0
 
 def setup():
     arcade.open_window(WIDTH, HEIGHT, "My Arcade Game")
@@ -47,42 +51,63 @@ def setup():
 
 
 def update(delta_time):
-    global left_key, right_key, player_x, player_y, zombie_y, zombie_x, health
+    global left_key, right_key, player_x, player_y, zombie_y, zombie_x, health, current_screen,player_speed, zombie_speed, zombie_loop
 
     if current_screen == "play":
-        #player
-        speed = 8
+        # player
+
         if left_key == True:
-            player_x -= speed
+            player_x -= player_speed
         elif right_key == True:
-            player_x += speed
+            player_x += player_speed
 
-
-        #player border
+        # player border
         if player_x < 10:
             player_x = 10
         elif player_x > WIDTH - 55:
             player_x = WIDTH - 55
 
-
-        #zombie
+        # zombie
         for index in range(len(zombie_y)):
-            zombie_y[index] -= 5
-            if zombie_y[index] < 0:
+            zombie_y[index] -= zombie_speed
+            if zombie_y[index] < 0 or health == 0:
                 zombie_y[index] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
                 zombie_x[index] = random.randrange(15, WIDTH - 25, 40)
+                
+        if zombie_y[0] >= 0:
+            zombie_loop += 1
+        
+        if zombie_loop == 5:
+            zombie_speed += 1
 
+        # collision
+        for i in range(len(zombie_x)):
+            if (zombie_x[i] >= player_x and zombie_x[i] <= player_x + 45 and
+                zombie_y[i] <= player_y and zombie_y[i] >= player_y - 45 or
+                zombie_x[i] + zombie_w >= player_x and zombie_x[i] + zombie_w <= player_x + 45 and
+                zombie_y[i] <= player_y and zombie_y[i] >= player_y - 45):
+                    health -= 10
+                    zombie_y[i] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
+
+        if health == 0:
+            current_screen = "dead"
+            for index in range(len(zombie_y)):
+                    zombie_y[index] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
+                    zombie_x[index] = random.randrange(15, WIDTH - 25, 40)
+
+
+    if current_screen == "dead":
+        health = 100
 
 
 def on_draw():
     arcade.start_render()
     # Draw in here...
-    global player_x, player_y, zombie_x, zombie_y, zombie_w, zombie_h, hit
+    global player_x, player_y, zombie_x, zombie_y, zombie_w, zombie_h, health
 
     if current_screen == "menu":
         arcade.draw_text("DODGE ZOMBIES", 25, HEIGHT-100,arcade.color.BLACK,36,2000,"Right", "Calibri",True)
         arcade.draw_text("Press Space to play",WIDTH/3,HEIGHT/3,arcade.color.BLACK)
-        arcade.draw_text("ESC to return to menu",WIDTH/3,HEIGHT/3.5,arcade.color.BLACK)
         arcade.draw_text("How to Play(a)", WIDTH/3, HEIGHT/2.5,arcade.color.BLACK)
 
         arcade.set_background_color(arcade.color.LIGHT_MOSS_GREEN)
@@ -102,12 +127,18 @@ def on_draw():
 
     if current_screen == "play":
         arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
-        arcade.draw_text("ESC to return to menu",WIDTH/3,50,arcade.color.WHITE)
 
+        #player
         arcade.draw_xywh_rectangle_filled(player_x, player_y, 40,40, arcade.color.RED)
 
+        #zombie
         for x,y in zip(zombie_x,zombie_y):
             draw_zombie(x,y,zombie_w,zombie_h)
+
+        #healthbar
+        arcade.draw_xywh_rectangle_filled(275, 600, 200, 35, arcade.color.GOLDEN_POPPY)
+        arcade.draw_xywh_rectangle_filled(285, 605, 180, 25, arcade.color.GOLDEN_BROWN)
+        arcade.draw_xywh_rectangle_filled(285, 605, 180 * health / 100, 25, arcade.color.RED)
 
     if current_screen == "dead":
         arcade.set_background_color(arcade.color.BLACK)
@@ -118,7 +149,7 @@ def on_draw():
         arcade.draw_text("ESC to return to menu",WIDTH/3,50,arcade.color.WHITE)
 
 def on_key_press(key, modifiers):
-    global left_key, right_key, up_key, down_key, current_screen
+    global left_key, right_key, up_key, down_key, current_screen, health
 
     if current_screen == "menu":
         if key == arcade.key.A:
@@ -169,6 +200,8 @@ def draw_zombie(x,y,w,h):
     arcade.draw_xywh_rectangle_filled(x, y-40, w, h/2, arcade.color.SAND)
     arcade.draw_xywh_rectangle_filled(x, y-50, w-20, h/8, arcade.color.LIGHT_MOSS_GREEN)
     arcade.draw_xywh_rectangle_filled(x+20, y-50, w-20, h/8, arcade.color.LIGHT_MOSS_GREEN)
+
+
 
 if __name__ == '__main__':
     setup()

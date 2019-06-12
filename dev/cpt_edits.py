@@ -1,5 +1,6 @@
 import arcade
 import random
+import time
 
 WIDTH = 500
 HEIGHT = 650
@@ -73,12 +74,14 @@ def update(delta_time):
             if zombie_y[index] < 0 or health == 0:
                 zombie_y[index] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
                 zombie_x[index] = random.randrange(15, WIDTH - 25, 40)
-                
-        if zombie_y[0] >= 0:
+
+        if zombie_y[0] <= 0:
             zombie_loop += 1
-        
-        if zombie_loop == 5:
-            zombie_speed += 1
+            print(f"loop {zombie_loop}")
+            if zombie_loop % 5 == 0:
+                zombie_speed += 1
+                print(f"speed: {zombie_speed}")
+
 
         # collision
         for i in range(len(zombie_x)):
@@ -130,7 +133,7 @@ def on_draw():
         arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
 
         #player
-        arcade.draw_xywh_rectangle_filled(player_x, player_y, 40,40, arcade.color.RED)
+        draw_car(player_x, player_y)
 
         #zombie
         for x,y in zip(zombie_x,zombie_y):
@@ -176,7 +179,6 @@ def on_key_press(key, modifiers):
             current_screen = "menu"
 
 
-
 def on_key_release(key, modifiers):
     global left_key, right_key, up_key, down_key
 
@@ -192,16 +194,19 @@ def on_mouse_press(x, y, button, modifiers):
     pass
 
 def draw_zombie(x,y,w,h):
-    # x = 320
-    # y = 240
-    # w = 30
-    # h = 80
 
     arcade.draw_xywh_rectangle_filled(x, y, w, h/8*3, arcade.color.LIGHT_MOSS_GREEN)
     arcade.draw_xywh_rectangle_filled(x, y-40, w, h/2, arcade.color.SAND)
     arcade.draw_xywh_rectangle_filled(x, y-50, w-20, h/8, arcade.color.LIGHT_MOSS_GREEN)
     arcade.draw_xywh_rectangle_filled(x+20, y-50, w-20, h/8, arcade.color.LIGHT_MOSS_GREEN)
 
+def draw_car(x,y):
+    arcade.draw_xywh_rectangle_filled(x, y, 40, 40, arcade.color.RED)
+    arcade.draw_xywh_rectangle_filled(x, y - 10, 10, 10, arcade.color.BLACK)
+    arcade.draw_xywh_rectangle_filled(x + 30, y - 10, 10, 10, arcade.color.BLACK)
+    arcade.draw_xywh_rectangle_filled(x + 5, y + 20, 30, 15, arcade.color.PALE_ROBIN_EGG_BLUE)
+    arcade.draw_xywh_rectangle_filled(x, y + 5, 10, 5, arcade.color.GOLD)
+    arcade.draw_xywh_rectangle_filled(x + 30, y + 5, 10, 5, arcade.color.GOLD)
 
 
 if __name__ == '__main__':

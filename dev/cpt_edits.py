@@ -50,7 +50,7 @@ def setup():
 
 
 def update(delta_time):
-    global left_key, right_key, player_x, player_y, zombie_y, zombie_x, health, current_screen, player_speed, zombie_speed, zombie_loop
+    global left_key, right_key, player_x, player_y, zombie_y, zombie_x, health, current_screen, player_speed, zombie_speed, zombie_loop, num
 
     if current_screen == "play":
         # player
@@ -75,16 +75,18 @@ def update(delta_time):
 
         if zombie_y[0] <= 0:
             zombie_loop += 1
-            print(f"loop {zombie_loop}")
-            if zombie_loop % 10 == 0:
+            print(f"loop: {zombie_loop}")
+            if zombie_loop % 5 == 0:
                 zombie_speed += 1
+                print(f"speed: {zombie_speed}")
+
 
         # collision
         for i in range(len(zombie_x)):
-            if (zombie_x[i] >= player_x and zombie_x[i] <= player_x + 45 and
-                    zombie_y[i] <= player_y and zombie_y[i] >= player_y - 45 or
-                    zombie_x[i] + zombie_w >= player_x and zombie_x[i] + zombie_w <= player_x + 45 and
-                    zombie_y[i] <= player_y and zombie_y[i] >= player_y - 45):
+            if (zombie_x[i] >= player_x and zombie_x[i] <= player_x + 40 and
+                    zombie_y[i] <= player_y and zombie_y[i] >= player_y - 40 or
+                    zombie_x[i] + zombie_w >= player_x and zombie_x[i] + zombie_w <= player_x + 40 and
+                    zombie_y[i] <= player_y and zombie_y[i] >= player_y - 40):
                 health -= 10
                 zombie_x[i] = random.randrange(15, WIDTH - 25, 40)
                 zombie_y[i] = random.randrange(HEIGHT + 25, HEIGHT + 250, 70)
@@ -97,10 +99,8 @@ def update(delta_time):
             player_x = WIDTH / 2 - 40 / 2
             player_y = 50
             health = 100
-            zombie_speed = 5
+            zombie_speed = 6
             zombie_loop = 0
-
-
 
 
 def on_draw():
@@ -112,16 +112,7 @@ def on_draw():
         draw_menu()
 
     if current_screen == "instructions":
-        arcade.draw_text("How to Play:", 20, HEIGHT - 50, arcade.color.BLACK, 24)
-        arcade.draw_text(""" 
-        1. Use left and right arrow keys to move the player.
-        2. Your objective is to get as far as you can without dying.
-        3. Each time you hit a zombie you lose 10 health
-        4. Once your health reaches zero, you lose.
-        """, 0, HEIGHT - HEIGHT / 3, arcade.color.BLACK)
-        arcade.draw_text("ESC to return to menu", WIDTH / 3, 50, arcade.color.BLACK)
-
-        arcade.set_background_color(arcade.color.PINK_PEARL)
+        draw_instructions()
 
     if current_screen == "play":
         arcade.set_background_color(arcade.color.BATTLESHIP_GREY)
@@ -139,12 +130,7 @@ def on_draw():
         arcade.draw_xywh_rectangle_filled(285, 605, 180 * health / 100, 25, arcade.color.RED)
 
     if current_screen == "dead":
-        arcade.set_background_color(arcade.color.BLACK)
-        arcade.draw_text("DUN", 25, HEIGHT - 100, arcade.color.RED, 36, 2000, "left", "Calibri", True)
-        arcade.draw_text("DUN", 300, HEIGHT - 150, arcade.color.RED, 36, 2000, "left", "Calibri", True)
-        arcade.draw_text("DUN", 100, HEIGHT - 200, arcade.color.RED, 36, 2000, "left", "Calibri", True)
-        arcade.draw_text("You Died", WIDTH / 4, HEIGHT / 2, arcade.color.WHITE, 40)
-        arcade.draw_text("ESC to return to menu", WIDTH / 3, 50, arcade.color.WHITE)
+        draw_dead_screen()
 
 
 def on_key_press(key, modifiers):
@@ -217,10 +203,28 @@ def draw_menu():
     arcade.draw_xywh_rectangle_filled(200, 150, 200, 50, arcade.color.REDWOOD)
     arcade.draw_xywh_rectangle_filled(300, 150, 100, 50, arcade.color.PINK)
 
-
     arcade.set_background_color(arcade.color.LIGHT_MOSS_GREEN)
 
+def draw_instructions():
+    arcade.draw_text("How to Play:", 20, HEIGHT - 50, arcade.color.BLACK, 24)
+    arcade.draw_text(""" 
+    1. Use left and right arrow keys to move the player.
+    2. Your objective is to get as far as you can without dying.
+    3. Each time you hit a zombie you lose 10 health
+    4. Once your health reaches zero, you lose.
+    """, 0, HEIGHT - HEIGHT / 3, arcade.color.BLACK)
+    arcade.draw_text("ESC to return to menu", WIDTH / 3, 50, arcade.color.BLACK)
 
+    arcade.set_background_color(arcade.color.PINK_PEARL)
+
+def draw_dead_screen():
+    arcade.set_background_color(arcade.color.BLACK)
+
+    arcade.draw_text("DUN", 25, HEIGHT - 100, arcade.color.RED, 36, 2000, "left", "Calibri", True)
+    arcade.draw_text("DUN", 300, HEIGHT - 150, arcade.color.RED, 36, 2000, "left", "Calibri", True)
+    arcade.draw_text("DUN", 100, HEIGHT - 200, arcade.color.RED, 36, 2000, "left", "Calibri", True)
+    arcade.draw_text("You Died", WIDTH / 4, HEIGHT / 2, arcade.color.WHITE, 40)
+    arcade.draw_text("ESC to return to menu", WIDTH / 3, 50, arcade.color.WHITE)
 
 if __name__ == '__main__':
     setup()
